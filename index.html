@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Shopping Platform</title>
+    <style>
+        /* CSS Styles for Layout */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .button-container {
+            margin: 10px 0;
+        }
+
+        .register-btn,
+        .show-cart-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 10px;
+        }
+
+        .register-btn:hover,
+        .show-cart-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .registration-form,
+        .payment-form {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 40px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: none;
+            margin-top: 20px;
+        }
+
+        .registration-form.active,
+        .payment-form.active {
+            display: block;
+        }
+
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .product-item {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: calc(30% - 20px);
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+
+        .product-item:hover {
+            transform: scale(1.03);
+        }
+
+        .product-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .product-item h3,
+        .product-item p {
+            margin: 10px 0;
+        }
+
+        .product-item button,
+        .checkout-btn,
+        .mpesa-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .product-item button:hover,
+        .checkout-btn:hover,
+        .mpesa-btn:hover {
+            background-color: #218838;
+        }
+
+        .cart-container {
+            position: fixed;
+            right: 20px;
+            top: 70px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            width: 300px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+        }
+
+        .cart-container.active {
+            display: block;
+        }
+
+        .cart-container h3 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .cart-container ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .cart-container ul li {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-container .cart-total {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .remove-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .remove-btn:hover {
+            background-color: #c82333;
+        }
+
+        /* Enhanced Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        footer .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        footer .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        footer .footer-section h4 {
+            margin-bottom: 15px;
+        }
+
+        footer .footer-section p,
+        footer .footer-section a {
+            color: white;
+            text-decoration: none;
+            margin: 5px 0;
+            display: block;
+        }
+
+        footer .footer-section a:hover {
+            text-decoration: underline;
+        }
+
+        footer .social-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        footer .social-icons a {
+            color: white;
+            font-size: 1.2rem;
+            text-decoration: none;
+        }
+
+        footer .social-icons a:hover {
+            color: #007bff;
+        }
+
+        footer .copyright {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #bbb;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Welcome to Our Online Shopping Platform</h1>
+    <div class="button-container">
+        <button class="register-btn" onclick="toggleRegistrationForm()">Register</button>
+        <button class="show-cart-btn" onclick="toggleCart()">Show Cart</button>
+    </div>
+</header>
+
+<!-- Registration Form -->
+<div id="registrationFormContainer" class="registration-form">
+    <h2>Register</h2>
+    <label for="name">Name:</label>
+    <input type="text" id="name" placeholder="Enter your name">
+    <label for="email">Email:</label>
+    <input type="email" id="email" placeholder="Enter your email">
+    <button onclick="submitRegistration()">Submit</button>
+</div>
+
+<!-- Payment Form -->
+<div id="paymentFormContainer" class="payment-form">
+    <h2>Payment via M-Pesa</h2>
+    <label for="paymentPhone">Phone Number:</label>
+    <input type="text" id="paymentPhone" placeholder="Enter your phone number">
+    <label for="availableCredits">Available Credits (KSh):</label>
+    <input type="number" id="availableCredits" placeholder="Enter your credits">
+    <button onclick="processPayment()">Pay Now</button>
+</div>
+
+<div class="container">
+    <!-- Product List -->
+    <div class="product-list">
+        <!-- Product 1 -->
+        <div class="product-item">
+            <img src="l1.jpeg" alt="Product 1">
+            <h3>Product 1</h3>
+            <p>Price: KSh 1,500</p>
+            <button onclick="addToCart('Product 1', 1500)">Add to Cart</button>
+        </div>
+        <!-- Product 2 -->
+        <div class="product-item">
+            <img src="l2.jpeg" alt="Product 2">
+            <h3>Product 2</h3>
+            <p>Price: KSh 2,000</p>
+            <button onclick="addToCart('Product 2', 2000)">Add to Cart</button>
+        </div>
+        <!-- Product 3 -->
+        <div class="product-item">
+            <img src="l3.jpeg" alt="Product 3">
+            <h3>Product 3</h3>
+            <p>Price: KSh 2,500</p>
+            <button onclick="addToCart('Product 3', 2500)">Add to Cart</button>
+        </div>
+        <!-- Product 4 -->
+        <div class="product-item">
+            <img src="l4.jpeg" alt="Product 4">
+            <h3>Product 4</h3>
+            <p>Price: KSh 3,000</p>
+            <button onclick="addToCart('Product 4', 3000)">Add to Cart</button>
+        </div>
+        <!-- Product 5 -->
+        <div class="product-item">
+            <img src="l5.jpeg" alt="Product 5">
+            <h3>Product 5</h3>
+            <p>Price: KSh 3,500</p>
+            <button onclick="addToCart('Product 5', 3500)">Add to Cart</button>
+        </div>
+        <!-- Product 6 -->
+        <div class="product-item">
+            <img src="l6.jpeg" alt="Product 6">
+            <h3>Product 6</h3>
+            <p>Price: KSh 4,000</p>
+            <button onclick="addToCart('Product 6', 4000)">Add to Cart</button>
+        </div>
+        <!-- Product 7 -->
+        <div class="product-item">
+            <img src="l7.jpeg" alt="Product 7">
+            <h3>Product 7</h3>
+            <p>Price: KSh 4,500</p>
+            <button onclick="addToCart('Product 7', 4500)">Add to Cart</button>
+        </div>
+        <!-- Product 8 -->
+        <div class="product-item">
+            <img src="l8.jpeg" alt="Product 8">
+            <h3>Product 8</h3>
+            <p>Price: KSh 5,000</p>
+            <button onclick="addToCart('Product 8', 5000)">Add to Cart</button>
+        </div>
+        <!-- Product 9 -->
+        <div class="product-item">
+            <img src="l9.jpeg" alt="Product 9">
+            <h3>Product 9</h3>
+            <p>Price: KSh 5,500</p>
+            <button onclick="addToCart('Product 9', 5500)">Add to Cart</button>
+        </div>
+        <!-- Product 10 -->
+        <div class="product-item">
+            <img src="l10.jpeg" alt="Product 10">
+            <h3>Product 10</h3>
+            <p>Price: KSh 6,000</p>
+            <button onclick="addToCart('Product 10', 6000)">Add to Cart</button>
+        </div>
+    </div>
+</div>
+
+<!-- Cart Container -->
+<div id="cartContainer" class="cart-container">
+    <h3>Your Cart</h3>
+    <ul id="cartList"></ul>
+    <div class="cart-total" id="cartTotal">Total: KSh 0</div>
+    <button class="checkout-btn" onclick="showMpesaForm()">Checkout</button>
+    <button class="mpesa-btn" onclick="showPaymentForm()">Pay via M-Pesa</button>
+</div>
+
+<footer>
+    <div class="footer-content">
+        <div class="footer-section">
+            <h4>Contact Us</h4>
+            <p>Email: support@shoppingplatform.com</p>
+            <p>Phone: +254 700 000 000</p>
+        </div>
+        <div class="footer-section">
+            <h4>Follow Us</h4>
+            <div class="social-icons">
+                <a href="#">Facebook</a>
+                <a href="#">Twitter</a>
+                <a href="#">Instagram</a>
+            </div>
+        </div>
+    </div>
+    <div class="copyright">© 2024 Online Shopping Platform. All rights reserved.</div>
+</footer>
+
+<script>
+    let cart = [];
+    let total = 0;
+
+    function toggleRegistrationForm() {
+        const form = document.getElementById('registrationFormContainer');
+        form.classList.toggle('active');
+        form.reset();
+    }
+
+    function submitRegistration() {
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+
+        if (name && email) {
+            alert(`Registration successful! \nName: ${name} \nEmail: ${email}`);
+            document.getElementById('registrationFormContainer').classList.remove('active');
+        } else {
+            alert('Please fill in all fields.');
+        }
+    }
+
+    function addToCart(product, price) {
+        cart.push({ product, price });
+        total += price;
+        updateCart();
+        alert(`${product} has been added to your cart.`);
+    }
+
+    function removeFromCart(index) {
+        total -= cart[index].price;
+        cart.splice(index, 1);
+        updateCart();
+        alert('Item removed from cart.');
+    }
+
+    function updateCart() {
+        const cartList = document.getElementById('cartList');
+        const cartTotal = document.getElementById('cartTotal');
+        cartList.innerHTML = '';
+        cart.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.textContent = `${item.product} - KSh ${item.price}`;
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = 'Remove';
+            removeBtn.className = 'remove-btn';
+            removeBtn.onclick = () => removeFromCart(index);
+            li.appendChild(removeBtn);
+            cartList.appendChild(li);
+        });
+        cartTotal.textContent = `Total: KSh ${total}`;
+    }
+
+    function toggleCart() {
+        const cartContainer = document.getElementById('cartContainer');
+        cartContainer.classList.toggle('active');
+    }
+
+    function showMpesaForm() {
+        const paymentForm = document.getElementById('paymentFormContainer');
+        paymentForm.classList.add('active');
+        paymentForm.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function processPayment() {
+        const paymentPhone = document.getElementById('paymentPhone').value;
+        const availableCredits = parseFloat(document.getElementById('availableCredits').value);
+
+        if (paymentPhone && availableCredits >= total) {
+            alert('Processing payment...');
+            setTimeout(() => {
+                alert(`Payment successful! \nPhone Number: ${paymentPhone} \nCredits Used: KSh ${total}`);
+                resetCart();
+            }, 3000);
+        } else if (!paymentPhone) {
+            alert('Please enter your phone number.');
+        } else {
+            alert('Insufficient credits for this purchase.');
+        }
+    }
+
+    function resetCart() {
+        cart = [];
+        total = 0;
+        updateCart();
+        document.getElementById('paymentFormContainer').classList.remove('active');
+        document.getElementById('paymentPhone').value = '';
+        document.getElementById('availableCredits').value = '';
+    }
+</script>
+
+</body>
+
+</html>
